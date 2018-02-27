@@ -45,7 +45,7 @@ func = 1;
 beta = 1;
 gv = 0.6;
 
-im = imnoise(im,'gaussian',0,0.01);
+im = imnoise(im,'gaussian',0,0.03);
 psnr(im, im_good)
 
 if ndims(im)==3

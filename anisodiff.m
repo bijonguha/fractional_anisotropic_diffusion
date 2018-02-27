@@ -143,18 +143,18 @@ for i = 1:niter
 % figure();
 % % Uncomment the following to see a progression of images
 % subplot(ceil(sqrt(niter)),ceil(sqrt(niter)), i)
-figure();
-pause(0)
-imagesc(diff), colormap(gray), axis image
+% figure();
+% pause(0)
+% imagesc(diff), colormap(gray), axis image
 
 end
 fprintf('\n');
 
 % Uncomment the following to see histogram of final loop coeffecient value
-% figure()
-% imhist(cN)
-% figure()
-% imhist(cS)
+figure()
+imhist(cN)
+figure()
+imhist(cS)
 % figure()
 % imhist(cW)
 % figure()
