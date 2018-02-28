@@ -3,7 +3,7 @@ clear all;
 
 'Fractional perona malik'
 
-im = imread('lena.jpg');
+im = imread('boat.jpg');
 im_good = im;
 
 kappa = 25;
@@ -11,13 +11,15 @@ lambda = 0.19;
 option = 2;
 niter = 10;
 v = 1.1;
-func = 4;
+func = 1;
 beta = 1;
 gv = 0.6;
+mean = 0;
+var = 0.01;
 
 KO = 25; K1 = 5;
 
-im = imnoise(im,'gaussian',0,0.03);
+im = imnoise(im,'gaussian',mean,var);
 psnr(im, im_good)
 
 if ndims(im)==3
