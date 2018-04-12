@@ -2,13 +2,15 @@ display('Code Start')
 clear all;
 close all;
 
-ig = imread('lena.png');
+ig = imread('wallpaint.png');
+ig = imresize(ig,[1024,1024]);
 
 if ndims(ig)==3
   ig = rgb2gray(ig);
 end
 
-imN = imnoise(ig,'gaussian',0,0.03);
+imN = imnoise(ig,'gaussian',0,0.035);
+
 [psnr(uint8(imN),uint8(ig))]
 
 im = wave_denoising(imN,'sym4','s',1);
@@ -26,23 +28,23 @@ imgV = idwt2(wA,zeros(size(wH)),wV,zeros(size(wD)),'sym4');
 imgD = idwt2(wA,zeros(size(wH)),zeros(size(wV)),wD,'sym4');
 %imgD = wave_denoising(imgDi,'db4','s',1);
 
-resALL = wave_denoising(fanisodiff(im,8,20,0.30,2,1.1,'AL4'),'sym4','s',4);
-resH = wave_denoising(fanisodiff(imgH,8,20,0.30,2,1.1,'NS'),'sym4','s',1);
-resV = wave_denoising(fanisodiff(imgV,8,20,0.30,2,1.1,'EW'),'sym4','s',1);
-resD = wave_denoising(fanisodiff(imgD,5,20,0.30,2,1,'D'),'sym4','s',1);
+resALL = medfilt2(fanisodiff(im,10,20,0.30,2,1.1,'AL4'),[5,5]);
+resH = medfilt2(fanisodiff(imgH,8,20,0.30,2,1.1,'NS'),[5,1]);
+resV = medfilt2(fanisodiff(imgV,8,20,0.30,2,1.1,'EW'),[1,5]);
+resD = medfilt2(fanisodiff(imgD,8,20,0.30,2,1.1,'D'),[5,5]);
 
-img = (resALL+0.4*resH+0.4*resV+0.2*resD)/2;
-img = fanisodiff(img,5,20,0.20,1,1,'AL4');
+img = (resALL+0.2*resH+0.2*resV+0.6*resD)/2;
+%img = fanisodiff(img,5,20,0.20,1,1,'AL4');
 
 figure()
 subplot(2,2,2)
 imshow(uint8(img));title('Proposed');
 subplot(2,2,3)
-imshow(uint8(anisodiff(imN,16,25,0.25,2)));title('P-M Model');
+imshow(uint8(anisodiff(imN,13,25,0.25,2)));title('P-M Model');
 subplot(2,2,4)
 imshow(uint8(wave_denoising(imN,'db4','s',2)));title('Wavelet Thresholding');
 subplot(2,2,1)
 imshow(uint8(imN));title('Nosiy Image');
-
-[psnr(uint8(img),uint8(ig)),psnr(uint8(anisodiff(imN,16,25,0.25,2)),uint8(ig)),...
+['Proposed ', ' PM Model ', ' Wavelet thresholding']
+[psnr(uint8(img),uint8(ig)),psnr(uint8(anisodiff(imN,13,25,0.25,2)),uint8(ig)),...
     psnr(uint8(wave_denoising(imN,'db4','s',2)),uint8(ig))]
