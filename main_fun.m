@@ -5,11 +5,14 @@ close all;
 ig = imread('wallpaint.png');
 ig = imresize(ig,[1024,1024]);
 
+
 if ndims(ig)==3
   ig = rgb2gray(ig);
 end
 
-imN = imnoise(ig,'gaussian',0,0.035);
+ig1 = im2double(ig);
+imN = imnoise(ig1,'gaussian',0,0.02);
+imN = imN*255;
 
 [psnr(uint8(imN),uint8(ig))]
 
@@ -36,15 +39,22 @@ resD = medfilt2(fanisodiff(imgD,8,20,0.30,2,1.1,'D'),[5,5]);
 img = (resALL+0.2*resH+0.2*resV+0.6*resD)/2;
 %img = fanisodiff(img,5,20,0.20,1,1,'AL4');
 
-figure()
+andif = anisodiff(imN,13,25,0.25,2);
+nshrink = NeighShrinkSUREdenoise(imN);
+
+figure(1)
 subplot(2,2,2)
 imshow(uint8(img));title('Proposed');
 subplot(2,2,3)
-imshow(uint8(anisodiff(imN,13,25,0.25,2)));title('P-M Model');
+imshow(uint8(andif));title('P-M Model');
 subplot(2,2,4)
 imshow(uint8(wave_denoising(imN,'db4','s',2)));title('Wavelet Thresholding');
 subplot(2,2,1)
-imshow(uint8(imN));title('Nosiy Image');
-['Proposed ', ' PM Model ', ' Wavelet thresholding']
-[psnr(uint8(img),uint8(ig)),psnr(uint8(anisodiff(imN,13,25,0.25,2)),uint8(ig)),...
-    psnr(uint8(wave_denoising(imN,'db4','s',2)),uint8(ig))]
+imshow(uint8(imN));title('Noisy Image');
+figure(2)
+subplot(2,2,1)
+imshow(uint8(nshrink));title('Neighshrink');
+['Proposed ||', ' PM Model ||', ' Wavelet thresholding ||', 'NeighShrink']
+[psnr(uint8(img),ig),psnr(uint8(andif),ig),...
+    psnr(uint8(wave_denoising(imN,'db4','s',2)),ig),...
+    psnr(uint8(nshrink),ig)]
